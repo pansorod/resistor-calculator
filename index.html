@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โปรแกรมคำนวณค่าความต้านทานตัวต้านทาน</title>
+    <!-- เรียกใช้งาน Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-emerald-50 text-gray-900 min-h-screen p-4 sm:p-8">
+
+    <!-- กรอบหลักของเว็บ มุมไม่มน สไตล์สากล -->
+    <div class="max-w-4xl mx-auto bg-white border-2 border-emerald-400 overflow-hidden shadow-md">
+        
+        <!-- ส่วนหัวข้อเว็บ -->
+        <div class="bg-emerald-600 text-white p-5 text-center">
+            <h1 class="text-2xl sm:text-3xl font-bold">โปรแกรมคำนวณแถบสีตัวต้านทาน</h1>
+            <p class="text-sm text-emerald-100 mt-1">จัดทำโดย ปานโสฬส ทรัพย์ประเดิมชัย 🌿</p>
+        </div>
+
+        <div class="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- ฝั่งซ้าย: ส่วนเลือกและตัวต้านทาน -->
+            <div class="space-y-4">
+                <div class="border border-emerald-200 p-4 bg-emerald-50/50">
+                    <h2 class="text-md font-bold text-emerald-800 mb-2 border-b border-emerald-200 pb-1">รูปจำลองตัวต้านทาน</h2>
+                    <!-- รูปตัวต้านทานจำลอง (มีขาลวดซ้าย-ขวา) -->
+                    <div class="w-full h-20 bg-emerald-50/30 flex items-center justify-center relative my-1">
+                        <!-- ขาลวดซ้าย -->
+                        <div class="w-12 h-1.5 bg-gray-400"></div>
+                        <!-- ตัวถังตัวต้านทาน -->
+                        <div class="w-48 h-12 bg-amber-100 border-2 border-amber-400 rounded-full flex items-center justify-around px-6 relative shadow-inner">
+                            <div id="band1" class="w-2.5 h-full shadow" style="background-color: #78350f;"></div>
+                            <div id="band2" class="w-2.5 h-full shadow" style="background-color: #dc2626;"></div>
+                            <div id="band3" class="w-2.5 h-full shadow" style="background-color: #ea580c;"></div>
+                            <div id="band4" class="w-2.5 h-full shadow" style="background-color: #ca8a04;"></div>
+                        </div>
+                        <!-- ขาลวดขวา -->
+                        <div class="w-12 h-1.5 bg-gray-400"></div>
+                    </div>
+                </div>
+
+                <!-- กล่องแสดงผลลัพธ์ -->
+                <div class="bg-amber-50 border-2 border-amber-300 p-4 text-center shadow-sm">
+                    <span class="text-sm font-semibold text-gray-700">ค่าความต้านทานที่อ่านได้:</span>
+                    <div id="result-text" class="text-2xl sm:text-3xl font-bold text-emerald-700 my-1">1.2 kΩ (1,200 Ω)</div>
+                    <div id="tolerance-text" class="text-sm font-medium text-gray-600">ความคลาดเคลื่อน: ±5%</div>
+                </div>
+
+                <!-- ฟอร์มเลือกแถบสี -->
+                <div class="space-y-3 bg-gray-50 border border-gray-200 p-4">
+                    <h2 class="text-md font-bold text-emerald-800 border-b border-emerald-200 pb-1">เลือกสีแต่ละแถบ</h2>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">แถบที่ 1 (หลักที่ 1):</label>
+                        <select id="select-band1" class="w-full p-2 border border-gray-300 text-sm bg-white focus:outline-none focus:border-emerald-500">
+                            <option value="0" data-color="#111827">ดำ (0)</option>
+                            <option value="1" data-color="#78350f" selected>น้ำตาล (1)</option>
+                            <option value="2" data-color="#dc2626">แดง (2)</option>
+                            <option value="3" data-color="#ea580c">ส้ม (3)</option>
+                            <option value="4" data-color="#ca8a04">เหลือง (4)</option>
+                            <option value="5" data-color="#16a34a">เขียว (5)</option>
+                            <option value="6" data-color="#2563eb">ฟ้า / น้ำเงิน (6)</option>
+                            <option value="7" data-color="#9333ea">ม่วง (7)</option>
+                            <option value="8" data-color="#4b5563">เทา (8)</option>
+                            <option value="9" data-color="#e5e7eb">ขาว (9)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">แถบที่ 2 (หลักที่ 2):</label>
+                        <select id="select-band2" class="w-full p-2 border border-gray-300 text-sm bg-white focus:outline-none focus:border-emerald-500">
+                            <option value="0" data-color="#111827">ดำ (0)</option>
+                            <option value="1" data-color="#78350f">น้ำตาล (1)</option>
+                            <option value="2" data-color="#dc2626" selected>แดง (2)</option>
+                            <option value="3" data-color="#ea580c">ส้ม (3)</option>
+                            <option value="4" data-color="#ca8a04">เหลือง (4)</option>
+                            <option value="5" data-color="#16a34a">เขียว (5)</option>
+                            <option value="6" data-color="#2563eb">ฟ้า / น้ำเงิน (6)</option>
+                            <option value="7" data-color="#9333ea">ม่วง (7)</option>
+                            <option value="8" data-color="#4b5563">เทา (8)</option>
+                            <option value="9" data-color="#e5e7eb">ขาว (9)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">แถบที่ 3 (ตัวคูณ):</label>
+                        <select id="select-band3" class="w-full p-2 border border-gray-300 text-sm bg-white focus:outline-none focus:border-emerald-500">
+                            <option value="1" data-color="#111827">ดำ (x1 Ω)</option>
+                            <option value="10" data-color="#78350f">น้ำตาล (x10 Ω)</option>
+                            <option value="100" data-color="#dc2626" selected>แดง (x100 Ω)</option>
+                            <option value="1000" data-color="#ea580c">ส้ม (x1 kΩ)</option>
+                            <option value="10000" data-color="#ca8a04">เหลือง (x10 kΩ)</option>
+                            <option value="100000" data-color="#16a34a">เขียว (x100 kΩ)</option>
+                            <option value="1000000" data-color="#2563eb">ฟ้า / น้ำเงิน (x1 MΩ)</option>
+                            <option value="10000000" data-color="#9333ea">ม่วง (x10 MΩ)</option>
+                            <option value="0.1" data-color="#ca8a04">ทอง (x0.1 Ω)</option>
+                            <option value="0.01" data-color="#9ca3af">เงิน (x0.01 Ω)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">แถบที่ 4 (ความคลาดเคลื่อน):</label>
+                        <select id="select-band4" class="w-full p-2 border border-gray-300 text-sm bg-white focus:outline-none focus:border-emerald-500">
+                            <option value="±1%" data-color="#78350f">น้ำตาล (±1%)</option>
+                            <option value="±2%" data-color="#dc2626">แดง (±2%)</option>
+                            <option value="±0.5%" data-color="#16a34a">เขียว (±0.5%)</option>
+                            <option value="±0.25%" data-color="#2563eb">ฟ้า / น้ำเงิน (±0.25%)</option>
+                            <option value="±0.1%" data-color="#9333ea">ม่วง (±0.1%)</option>
+                            <option value="±0.05%" data-color="#4b5563">เทา (±0.05%)</option>
+                            <option value="±5%" data-color="#ca8a04" selected>ทอง (±5%)</option>
+                            <option value="±10%" data-color="#9ca3af">เงิน (±10%)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ฝั่งขวา: ตารางเทียบแถบสี และคำอธิบายการคิดค่า -->
+            <div class="space-y-4 flex flex-col justify-between">
+                <div class="border border-emerald-200 p-4 bg-emerald-50/50">
+                    <h2 class="text-md font-bold text-emerald-800 mb-3 border-b border-emerald-200 pb-1">ตารางแถบสีมาตรฐาน</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs border-collapse border border-gray-300 bg-white">
+                            <thead>
+                                <tr class="bg-emerald-100 text-emerald-900 text-center">
+                                    <th class="border border-gray-300 p-1.5">สี</th>
+                                    <th class="border border-gray-300 p-1.5">ค่าหลัก</th>
+                                    <th class="border border-gray-300 p-1.5">ตัวคูณ</th>
+                                    <th class="border border-gray-300 p-1.5">ความคลาดเคลื่อน</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td class="border border-gray-300 p-1.5"><span class="inline-block w-3 h-3 bg-black mr-1 align-middle"></span>ดำ</td><td class="border border-gray-300 p-1.5 text-center">0</td><td class="border border-gray-300 p-1.5 text-center">1 Ω</td><td class="border border-gray-300 p-1.5 text-center">-</td></tr>
+                                <tr class="bg-gray-50"><td class="border border-gray-300 p-1.5"><span class="inline-block w-3 h-3 bg-amber-800 mr-1 align-middle"></span>น้ำตาล</td><td class="border border-gray-300 p-1.5 text-center">1</td><td class="border border-gray-300 p-1.5 text-center">10 Ω</td><td class="border border-gray-300 p-1.5 text-center">±1%</td></tr>
+                                <tr><td class="border border-gray-300 p-1.5"><span class="inline-block w-3 h-3 bg-red-600 mr-1 align-middle"></span>แดง</td><td class="border border-gray-300 p-1.5 text-center">2</td><td class="border border-gray-300 p-1.5 text-center">100 Ω</td><td class="border border-gray-300 p-1.5 text-center">±2%</td></tr>
+                                <tr class="bg-gray-50"><td class="border border-gray-300 p-1.5"><span class="inline-block w-3 h-3 bg-orange-500 mr-1 align-middle"></span>ส้ม</td><td class="border border-gray-300 p-1.5 text-center">3</td><td class="border border-gray-300 p-1.5 text-center">1 kΩ</td><td class="border border-gray-300 p-1.5 text-center">-</td></tr>
+                                <tr><td class="border border-gray-300 p-1.5"><span class="inline-block w-3 h-3 bg-yellow-400 mr-1 align-middle"></span>เหลือง</td><td class="border border-gray-300 p-1.5 text-center">4</td><td class="border border-gray-300 p-1.5 text-center">10 kΩ</td><td class="border border-gray-300 p-1.5 text-center">-</td></tr>
+                                <tr class="bg-gray-50"><td class="border border-gray-300 p-1.5"><span class="inline-block w-3 h-3 bg-green-600 mr-1 align-middle"></span>เขียว</td><td class="border border-gray-300 p-1.5 text-center">5</td><td class="border border-gray-300 p-1.5 text-center">100 kΩ</td><td class="border border-gray-300 p-1.5 text-center">±0.5%</td></tr>
+                                <tr><td class="border border-gray-300 p-1.5"><span class="inline-block w-3 h-3 bg-blue-600 mr-1 align-middle"></span>ฟ้า</td><td class="border border-gray-300 p-1.5 text-center">6</td><td class="border border-gray-300 p-1.5 text-center">1 MΩ</td><td class="border border-gray-300 p-1.5 text-center">±0.25%</td></tr>
+                                <tr class="bg-gray-50"><td class="border border-gray-300 p-1.5"><span class="inline-block w-3 h-3 bg-purple-600 mr-1 align-middle"></span>ม่วง</td><td class="border border-gray-300 p-1.5 text-center">7</td><td class="border border-gray-300 p-1.5 text-center">10 MΩ</td><td class="border border-gray-300 p-1.5 text-center">±0.1%</td></tr>
+                                <tr><td class="border border-gray-300 p-1.5"><span class="inline-block w-3 h-3 bg-gray-500 mr-1 align-middle"></span>เทา</td><td class="border border-gray-300 p-1.5 text-center">8</td><td class="border border-gray-300 p-1.5 text-center">-</td><td class="border border-gray-300 p-1.5 text-center">±0.05%</td></tr>
+                                <tr class="bg-gray-50"><td class="border border-gray-300 p-1.5"><span class="inline-block w-3 h-3 bg-gray-200 border border-gray-400 mr-1 align-middle"></span>ขาว</td><td class="border border-gray-300 p-1.5 text-center">9</td><td class="border border-gray-300 p-1.5 text-center">-</td><td class="border border-gray-300 p-1.5 text-center">-</td></tr>
+                                <tr><td class="border border-gray-300 p-1.5"><span class="inline-block w-3 h-3 bg-yellow-500 mr-1 align-middle"></span>ทอง</td><td class="border border-gray-300 p-1.5 text-center">-</td><td class="border border-gray-300 p-1.5 text-center">0.1 Ω</td><td class="border border-gray-300 p-1.5 text-center">±5%</td></tr>
+                                <tr class="bg-gray-50"><td class="border border-gray-300 p-1.5"><span class="inline-block w-3 h-3 bg-gray-300 mr-1 align-middle"></span>เงิน</td><td class="border border-gray-300 p-1.5 text-center">-</td><td class="border border-gray-300 p-1.5 text-center">0.01 Ω</td><td class="border border-gray-300 p-1.5 text-center">±10%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- กล่องอธิบายวิธีคิด (เอาไอคอน พื้นหลัง และตัวเลขออก เหลือแต่ตัวหนังสือสีดำ) -->
+                <div class="border border-gray-300 bg-white p-4">
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">วิธีการคำนวณ (4 แถบสี)</h3>
+                    <p class="text-xs text-gray-800 leading-relaxed">
+                        • แถบที่ 1 และ 2: เอาตัวเลขมาต่อกันเป็นตัวตั้ง (หลักสิบและหลักหน่วย)<br>
+                        • แถบที่ 3 (ตัวคูณ): นำไปคูณกับค่าตัวตั้งที่ได้<br>
+                        • แถบที่ 4 (ความคลาดเคลื่อน): คือค่าบวกลบเปอร์เซ็นต์ความแม่นยำ
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ส่วนคำนวณด้วย JavaScript -->
+    <script>
+        const selectBand1 = document.getElementById('select-band1');
+        const selectBand2 = document.getElementById('select-band2');
+        const selectBand3 = document.getElementById('select-band3');
+        const selectBand4 = document.getElementById('select-band4');
+
+        const band1Element = document.getElementById('band1');
+        const band2Element = document.getElementById('band2');
+        const band3Element = document.getElementById('band3');
+        const band4Element = document.getElementById('band4');
+
+        const resultText = document.getElementById('result-text');
+        const toleranceText = document.getElementById('tolerance-text');
+
+        function calculateResistor() {
+            const v1 = selectBand1.value;
+            const v2 = selectBand2.value;
+            const mVal = parseFloat(selectBand3.value);
+            const tVal = selectBand4.value;
+
+            band1Element.style.backgroundColor = selectBand1.selectedOptions[0].getAttribute('data-color');
+            band2Element.style.backgroundColor = selectBand2.selectedOptions[0].getAttribute('data-color');
+            band3Element.style.backgroundColor = selectBand3.selectedOptions[0].getAttribute('data-color');
+            band4Element.style.backgroundColor = selectBand4.selectedOptions[0].getAttribute('data-color');
+
+            const baseNumber = parseInt(v1 + v2);
+            const finalOhms = baseNumber * mVal;
+
+            let displayString = finalOhms + " Ω";
+            if (finalOhms >= 1000000) {
+                displayString = (finalOhms / 1000000) + " MΩ (" + finalOhms.toLocaleString() + " Ω)";
+            } else if (finalOhms >= 1000) {
+                displayString = (finalOhms / 1000) + " kΩ (" + finalOhms.toLocaleString() + " Ω)";
+            } else if (finalOhms < 1) {
+                displayString = finalOhms + " Ω";
+            }
+
+            resultText.innerText = displayString;
+            toleranceText.innerText = "ความคลาดเคลื่อน: " + tVal;
+        }
+
+        selectBand1.addEventListener('change', calculateResistor);
+        selectBand2.addEventListener('change', calculateResistor);
+        selectBand3.addEventListener('change', calculateResistor);
+        selectBand4.addEventListener('change', calculateResistor);
+    </script>
+</body>
+</html>
